@@ -1,0 +1,65 @@
+{
+  "source": "batch_pipeline_daily",
+  "connection_string": "sqlite:///sample_data/demo.db",
+
+  "checks": [
+    {
+      "type": "row_count",
+      "table": "transactions",
+      "expected_min": 100,
+      "expected_max": 10000,
+      "where": "status = 'COMPLETED'"
+    },
+    {
+      "type": "null_check",
+      "table": "transactions",
+      "column": "transaction_id",
+      "max_null_pct": 0.0
+    },
+    {
+      "type": "null_check",
+      "table": "transactions",
+      "column": "amount",
+      "max_null_pct": 0.5
+    },
+    {
+      "type": "null_check",
+      "table": "customers",
+      "column": "email",
+      "max_null_pct": 2.0
+    },
+    {
+      "type": "referential_integrity",
+      "child_table":  "transactions",
+      "child_col":    "customer_id",
+      "parent_table": "customers",
+      "parent_col":   "id"
+    },
+    {
+      "type": "referential_integrity",
+      "child_table":  "order_items",
+      "child_col":    "product_id",
+      "parent_table": "products",
+      "parent_col":   "id"
+    },
+    {
+      "type": "duplicate_check",
+      "table": "transactions",
+      "key_columns": ["transaction_id"],
+      "max_dup_pct": 0.0
+    },
+    {
+      "type": "value_range",
+      "table": "transactions",
+      "column": "amount",
+      "min_val": 0,
+      "max_val": 1000000
+    },
+    {
+      "type": "cross_table_count",
+      "source_table": "transactions",
+      "target_table": "transaction_audit",
+      "tolerance_pct": 1.0
+    }
+  ]
+}
